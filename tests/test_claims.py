@@ -98,7 +98,8 @@ def test_default_numbers():
     fc, bid, res = a.rules["fcfs"], a.rules["bid_static"], a.rules["bid_resolve"]
     in_readme(f"Annahme nach Eingang **{pct(fc.exact_gap)} %**, Bid-Price einmal gerechnet **{pct(bid.exact_gap)} %** (der exakte Ertrag der exakten Rechnung ist {f1(a.v0)})")
     in_readme(f"Simulation mit 200 Folgen: {pct(fc.gap.mean)} / {pct(bid.gap.mean)} / {pct(res.gap.mean)} %")
-    in_readme(f"nimmt die Annahme nach Eingang {100 * fc.acc_short:.0f} % an, von den langen {100 * fc.acc_long:.0f} %; die exakte Rechnung {100 * a.rules['dp'].acc_short:.0f} % und {100 * a.rules['dp'].acc_long:.0f} %")
+    in_readme(f"{100 * fc.acc_short:.0f} % an, von den langen {100 * fc.acc_long:.0f} %; die exakte Rechnung {100 * a.rules['dp'].acc_short:.0f} % und {100 * a.rules['dp'].acc_long:.0f} %")
+    in_readme(f"Standardfehler {f1(fc.gap.se)} / {f1(bid.gap.se)} / {f1(res.gap.se)} Prozentpunkte")
     assert a.n == 200 and a.settings.seed == 35 and a.settings.params == Params()
 
 

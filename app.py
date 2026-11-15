@@ -97,9 +97,22 @@ Die Demo fragt: **Was kostet es, Buchungen in der Reihenfolge ihres Eingangs anz
 Verglichen werden die **Annahme nach Eingang**, ein **Bid-Price** (Schattenpreis je Teilstrecke), einmal gerechnet und je Periode neu, jeweils an der **exakten Rechnung** (Dynamische Programmierung über alle Belegungen) gemessen.
 
 Nachfrage und Preise sind Zufallsmodelle, keine Buchungsdaten. Weiter unten: die **Belegung** eines Beispielzuges, drei **Kernfragen**, sechs **Experimente** mit vorgerechneten Messreihen und die Expander
-**🔧 Wie wir das erreichen – vollständiger Methodenvergleich**, **📐 Mathematische Formulierung** und **🚧 Wo die Annahmen enden**.
+**🔧 Wie wir das erreichen – vollständiger Methodenvergleich**, **📐 Mathematische Formulierung** und **🚧 Wo die Annahmen enden**. Wer es ohne Fachwörter lesen will, öffnet **💬 In einfachen Worten**.
 """
 )
+
+# erklaerseite:einfach:start (erzeugt von tools/set_demo_explainer.py (Website-Repo) aus tools/content/explainers/teilstrecken-buchung-erklaert.json, nicht von Hand ändern)
+with st.expander("💬 In einfachen Worten"):
+    st.markdown(
+        """
+Ein Zug mit mehreren Halten, oder ein Hotel mit Aufenthalten über mehrere Nächte: Jede Buchung belegt einen Platz auf mehreren Teilstrecken zugleich, und jede Anfrage muss sofort angenommen oder abgelehnt werden. Eine lange Fahrt kann so Plätze belegen, die mehrere kurze, besser bezahlte Fahrten gebraucht hätten.
+
+Die App vergleicht die Annahme nach Eingang mit zwei Regeln, die für jede Teilstrecke einen Schattenpreis rechnen, und mit der bestmöglichen Regel, die sie exakt ausrechnet. Nachfrage und Preise sind ausgedacht, nicht aus Buchungsdaten.
+
+[Ausführlich und verständlich erklärt, mit Fachteil](https://sebastianhanisch.net/teilstrecken-buchung-erklaert.html)
+        """
+    )
+# erklaerseite:einfach:end
 st.caption("🔗 Die Adresszeile oben spiegelt Ihre aktuelle Konfiguration wider – einfach kopieren, um ein Szenario zu teilen.")
 
 load_permalink_settings()
@@ -279,6 +292,23 @@ Alle Regeln sehen dieselben Anfragefolgen; Unterschiede sind gepaarte Differenze
             st.caption("Die Einstellungen haben sich geändert: erneut „Exakte Rechnung starten“.")
 
 with st.expander("📐 Mathematische Formulierung"):
+    # erklaerseite:lesehilfe:start (erzeugt von tools/set_demo_explainer.py (Website-Repo) aus tools/content/explainers/teilstrecken-buchung-erklaert.json, nicht von Hand ändern)
+    st.markdown(
+        r"""
+**Lesehilfe.** Gegeben sind eine Linie mit $L$ Teilstrecken, je $K$ Plätze, Produkte (Fahrten) mit Preisen $f_p$ und Anfragen mit Wahrscheinlichkeiten $\lambda_{pt}$. Gesucht sind Annahmeregeln und ihr erwarteter Ertrag im Vergleich zur besten Regel. Die erste Formel berechnet die beste Regel rückwärts über alle Belegungen, die zweite das Optimierungsproblem, dessen Duale die Schattenpreise liefern.
+
+| Symbol | Bedeutung |
+|---|---|
+| $L, K$ | Zahl der Teilstrecken, Plätze je Teilstrecke |
+| $a_{\ell p}, f_p$ | 1, wenn Produkt $p$ die Teilstrecke $\ell$ belegt, sonst 0; Preis des Produkts |
+| $\lambda_{pt}$ | Wahrscheinlichkeit, dass in Periode $t$ Produkt $p$ angefragt wird |
+| $V_t(x)$ | größter erwarteter Ertrag ab Periode $t$ bei freien Plätzen $x$ (ein Wert je Teilstrecke) |
+| $\pi_\ell, D_p$ | Schattenpreis der Teilstrecke $\ell$, erwartete Gesamtnachfrage nach Produkt $p$ |
+
+[Schritt für Schritt erklärt, mit Herleitung und Literatur](https://sebastianhanisch.net/teilstrecken-buchung-erklaert.html#fachleute)
+        """
+    )
+    # erklaerseite:lesehilfe:end
     st.markdown(
         r"""
 **Gegeben:** Eine Linie mit $L$ Teilstrecken $\ell = 1, \dots, L$, auf jeder $K$ Plätze. Ein **Produkt** $p = (i, j)$ mit $0 \le i < j \le L$ belegt je einen Platz auf den Teilstrecken $i+1, \dots, j$ ($a_{\ell p} = 1$, sonst $0$),
