@@ -17,11 +17,11 @@ Eine Linie mit L Teilstrecken (Zug: 2 bis 6; Hotel: Nächte), auf jeder K Plätz
 
 ## Methodik
 
-- **Annahme nach Eingang:** nimmt jede Anfrage an, die passt.
+- **Annahme nach Eingang (First-Come-First-Served, FCFS):** nimmt jede Anfrage an, die passt.
 - **Bid-Price einmal gerechnet:** nimmt an, wenn der Preis mindestens die Summe der Schattenpreise der belegten Teilstrecken deckt. Die Schattenpreise sind die Duale der Kapazitätsbedingungen von „größter Ertrag bei erwarteter Nachfrage und voller Kapazität“ (`scipy.optimize.linprog`, HiGHS); bei entartetem Problem sind die Duale nicht eindeutig, die Demo nimmt die, die der Löser liefert, und die Aussagen über Bid-Price gelten für diese Wahl. Bei der Neuberechnung zählt die Restnachfrage die laufende Periode mit.
 - **Bid-Price je Periode neu:** dasselbe, aber das Problem wird in jeder Periode mit den freien Plätzen und der Restnachfrage neu gelöst.
-- **Exakte Rechnung:** Rückwärtsrechnung über alle (K + 1)^L Belegungen; angenommen wird, wenn Preis plus Wert der Belegung danach mindestens den Wert der jetzigen Belegung erreicht. Der erwartete Ertrag ist ein exakter Wert (kein Simulationsergebnis).
-- **Fester Schutz:** eine lange Fahrt wird nur angenommen, wenn danach auf jeder ihrer Teilstrecken noch k Plätze frei bleiben; alles andere nach Eingang.
+- **Exakte Rechnung:** Rückwärtsrekursion über alle (K + 1)^L Belegungen; angenommen wird, wenn Preis plus Wert der Belegung danach mindestens den Wert der jetzigen Belegung erreicht. Der erwartete Ertrag ist ein exakter Wert (kein Simulationsergebnis).
+- **Fester Schutz (Protection Level):** eine lange Fahrt wird nur angenommen, wenn danach auf jeder ihrer Teilstrecken noch k Plätze frei bleiben; alles andere nach Eingang.
 - **Prognose-Szenarien (4 Teilstrecken, 8 Plätze):** A Last 2, α 0,3, früh; B Last 1,2, α 0,6, gleichmäßig; C Last 3, α 0,6, früh; D Last 1,2, α 1, gleichmäßig; die fünf Verzerrungsstufen sind −50, −25, 0, +25 und +50 %. Das Hotel-Raster hat 9 Zellen (5 Nächte, 8 Zimmer, Last 1,2 / 2 / 3, α 1 / 0,6 / 0,3, lange Aufenthalte früh).
 - **Prognose:** Die Regeln rechnen mit einer Nachfrage, in der die Nachfrage nach langen Fahrten (mehr als die halbe Linie) mit 1 + Fehler multipliziert ist (−50 bis +50 %); gespielt werden die wahren Folgen. Die Referenz kennt die wahre Nachfrage.
 - **Live:** 200 Anfragefolgen mit Zufalls-Seeds `Zufalls-Seed · 1000 + k` aus einem eigenen SplitMix64; dazu der **exakte Erwartungswert** von Annahme nach Eingang, einmal gerechnetem Bid-Price und der exakten Rechnung mit Prognose (Zustandsrechnung ohne Simulation). Für die Neuberechnung gibt es keinen exakten Wert, nur die Simulation.

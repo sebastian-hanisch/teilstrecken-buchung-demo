@@ -161,7 +161,7 @@ c1, c2, c3, c4 = st.columns(4)
 for col, key in zip((c1, c2, c3), ("fcfs", "bid_static", "bid_resolve")):
     s = a.rules[key]
     col.metric(C.RULE_LABELS[key], f"{_num(100 + s.gap.mean)} %", delta=f"± {_num(s.gap.se)} Standardfehler", delta_color="off", help="Mittlerer Ertrag in Prozent der exakten Rechnung (= 100 %), gepaarte Folgen.")
-c4.metric("Exakte Rechnung", f"{_num(a.v0, 1)}", delta="erwarteter Ertrag = 100 %", delta_color="off", help="Exakter Erwartungswert des Ertrags bei wahrer Nachfrage (Rückwärtsrechnung über alle Belegungen).")
+c4.metric("Exakte Rechnung", f"{_num(a.v0, 1)}", delta="erwarteter Ertrag = 100 %", delta_color="off", help="Exakter Erwartungswert des Ertrags bei wahrer Nachfrage (Rückwärtsrekursion über alle Belegungen).")
 st.caption(f"Rechenzeit der Live-Rechnung: {elapsed:.1f} s ({a.n} Anfragefolgen mit Zufalls-Seeds {int(seed)} · 1000 + k, je {a.T} Perioden; {_thousands(a.states)} Zustände; wiederholte Einstellungen kommen aus dem Zwischenspeicher). "
            f"Kontrolle: Der simulierte Ertrag der exakten Rechnung weicht um {_sgn(a.sim_vs_v0.mean)} % (Standardfehler {_num(a.sim_vs_v0.se)}) vom exakten Erwartungswert ab.")
 st.plotly_chart(build_rules(a, params), width="stretch", config={"displayModeBar": False}, key="plot_rules")
@@ -245,7 +245,7 @@ st.caption(f"Ertrag in % der exakten Rechnung, {NET[0]['n']} Folgen je Zeile, La
 st.dataframe([{"Teilstrecken": r["L"], "Plätze je Teilstrecke": r["cap"], "Zustände": _thousands(r["zustaende"]), "Perioden": r["T"], "Speicher für alle Perioden (MB)": _num(r["mb"], 0), "live in dieser App": "ja" if r["live"] else "nein"}
               for r in DATA["zustaende"]], hide_index=True, width="stretch")
 
-st.subheader("🔬 5 · Ein fester Schutz für lange Fahrten")
+st.subheader("🔬 5 · Ein fester Schutz (Protection Level) für lange Fahrten")
 SCH = DATA["schutz"]
 st.dataframe([{"Szenario": f"{r['szenario']}: {r['label']}", "bester Schutz k": r["best_k"], "Annahme nach Eingang": _num(100 + r["fcfs"]["gap"]), "mit festem Schutz": _num(100 + r["schutz"]["gap"]),
                "Bid-Price einmal": _num(100 + r["bid_static"]["gap"])} for r in SCH], hide_index=True, width="stretch")
@@ -269,7 +269,7 @@ with st.expander("🔧 Wie wir das erreichen – vollständiger Methodenvergleic
 | **Annahme nach Eingang** | … immer |
 | **Bid-Price, einmal gerechnet** | … ihr Preis mindestens die Summe der Schattenpreise ihrer Teilstrecken deckt; die Schattenpreise sind die Duale des Optimierungsproblems „größter Ertrag bei erwarteter Nachfrage und Kapazität“, einmal zu Beginn gelöst |
 | **Bid-Price, je Periode neu** | … dasselbe, aber das Problem wird in jeder Periode mit den freien Plätzen und der Restnachfrage neu gelöst |
-| **Exakte Rechnung** | … der Preis plus der Wert der danach verbleibenden Belegung mindestens so groß ist wie der Wert der jetzigen Belegung (Rückwärtsrechnung über alle Belegungen) |
+| **Exakte Rechnung** | … der Preis plus der Wert der danach verbleibenden Belegung mindestens so groß ist wie der Wert der jetzigen Belegung (Rückwärtsrekursion über alle Belegungen) |
 
 Alle Regeln sehen dieselben Anfragefolgen; Unterschiede sind gepaarte Differenzen. Alle Zufallsfolgen kommen aus einem eigenen SplitMix64. """ + f"Die Live-Rechnung nutzt {C.LIVE_SEQ} Folgen, die Messreihen {DATA['raster'][0]['n']} (Neuberechnung: {DATA['netz'][0]['n']})." + """
 """
@@ -342,7 +342,7 @@ with st.expander("🚧 Wo die Annahmen enden"):
 - **Nachfrage, Preise und Buchungszeit** sind Zufallsmodelle mit gesetzten Parametern (Last, α, Buchungszeit), nicht an Buchungsdaten kalibriert. Die Prozentzahlen gelten für diese Modelle, nicht für echte Bahnen oder Hotels.
 - Es gibt **einen Preis je Produkt**, keine Preisklassen, keine Stornierungen und No-Shows, keine Überbuchung, kein Umbuchen und keine Sitzplatzzuweisung: Geprüft wird die Kapazität je Teilstrecke.
 - Die **exakte Rechnung** ist ein Maßstab für den bestmöglichen Ertrag einer sofort entscheidenden Regel; sie rechnet nur bei kleinen Netzen (hier höchstens """ + f"{_thousands(C.STATES_LIVE_MAX)}" + """ Zustände live).
-- **Bid-Price** ist ein gängiges Verfahren der Ertragssteuerung in Netzen (Talluri und van Ryzin 1998); hier ist es in der einfachsten Form umgesetzt. Die Aussagen gelten für diese Umsetzung und die gemessenen Zellen, nicht für jede Bid-Price-Variante.
+- **Bid-Price** ist ein gängiges Verfahren des Revenue Managements in Netzen (Talluri und van Ryzin 1998); hier ist es in der einfachsten Form umgesetzt. Die Aussagen gelten für diese Umsetzung und die gemessenen Zellen, nicht für jede Bid-Price-Variante.
 - Die **Prognosefehler** verzerren nur die Nachfrage nach langen Fahrten, um höchstens 50 %, in vier Szenarien; andere Fehler (Preise, kurze Fahrten, Zeitverlauf) sind nicht gemessen.
 - Ein Zug oder ein Hotel mit nur einer Linie; Netze mit Verzweigungen sind nicht umgesetzt.
 """
