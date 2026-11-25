@@ -1,7 +1,6 @@
 # Zug mit Halten: kurze oder lange Fahrt annehmen? – Streamlit-Demo
 
-<!-- TODO nach dem Deploy: direkt hierher den Live-Link setzen (Leerzeile davor und danach):
-**[→ Demo live ausprobieren](https://sebastianhanisch-teilstrecken-buchung-demo.streamlit.app/)** -->
+**[→ Demo live ausprobieren](https://sebastianhanisch-teilstrecken-buchung-demo.streamlit.app/)**
 
 Fall-Demo für die Website „Sebastian Hanisch – Operations Research und Machine Learning“ (Themenseite „Sitzplätze optimieren“). Ein **Zug mit mehreren Halten** (oder ein **Hotel mit Mehrnacht-Aufenthalten**): Eine Buchung belegt je einen Platz auf mehreren **Teilstrecken** zugleich, und jede Anfrage muss sofort angenommen oder abgelehnt werden. Die Demo vergleicht vier Annahmeregeln, alle gemessen an der **exakten Rechnung** (Dynamische Programmierung über alle Belegungen): **Annahme nach Eingang**, **Bid-Price einmal gerechnet** (Schattenpreis je Teilstrecke aus einem Optimierungsproblem), **Bid-Price je Periode neu** und die exakte Rechnung selbst.
 
